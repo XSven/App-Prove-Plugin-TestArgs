@@ -33,7 +33,7 @@ sub load {
     for ( @{ $config->{ $test_script } } ) {
       my ( $alias, $test_script_args ) = @{ $_ }{ qw( alias args ) };
       # update test args ("args" is optional)
-      $app_prove->test_args->{ $alias } = $test_script_args if defined $test_script_args;
+      $app_prove->test_args->{ $alias } = defined $test_script_args ? $test_script_args : [];
       push @{ $test_script_has_alias{ $test_script } }, [ $test_script, $alias ];
     }
   }

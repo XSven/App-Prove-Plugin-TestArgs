@@ -35,7 +35,8 @@ $app_prove->process_args( qw( t/foo.t t/bar.t ) );
 $app_prove->state_manager( $app_prove->state_class->new( { store => App::Prove->STATE_FILE } ) );
 $plugin_name->load( { app_prove => $app_prove, args => [ 't/config.yml' ] } );
 
-is_deeply $app_prove->test_args, { 'Foo once' => [ qw( foo bar ) ], 'Foo thrice' => [ 'baz' ] }, 'check test args';
+is_deeply $app_prove->test_args, { 'Foo once' => [ qw( foo bar ) ], 'Foo twice' => [], 'Foo thrice' => [ 'baz' ] },
+  'check test args';
 
 is_deeply [ $app_prove->_get_tests ],
   [ [ 't/foo.t', 'Foo once' ], [ 't/foo.t', 'Foo twice' ], [ 't/foo.t', 'Foo thrice' ], 't/bar.t' ],
