@@ -1,0 +1,7 @@
+# - This configuration file is only used by prove (App::Prove) and not
+#   by ExtUtils::MakeMaker. "make testp" triggers prove to run the tests.
+# - --shuffle and --recurse is turned on by default.
+# - The plugins are applied in order: First RunFirst test scripts are
+#   identified and second AssignAlias defines aliases for some of them.
+-PRunFirst=t/basic.t
+'-PAssignAlias=t/basic.t,Foo Once,t/basic.t,Foo Second'
