@@ -4,7 +4,7 @@ use strict; use warnings;
 #>>>
 
 use Test::Fatal qw( exception );
-use Test::More import => [ qw( BAIL_OUT can_ok is_deeply like plan require_ok subtest ) ], tests => 6;
+use Test::More import => [ qw( BAIL_OUT can_ok is_deeply like plan require_ok subtest ) ], tests => 5;
 
 use App::Prove ();
 
@@ -24,20 +24,48 @@ subtest 'provoke fatal perl diagnostics' => sub {
   like exception { $plugin_name->load( 'foo' ) }, qr/\ACan't use string/, 'pass string(scalar) argument';
 };
 
-my $app_prove = App::Prove->new;
-$app_prove->process_args( qw(:: foo) );
+my $_get_tests_orig = App::Prove->can( '_get_tests' );
 
-like exception { $plugin_name->load( { app_prove => $app_prove } ) },
-  qr/\AEither supply test script arguments at the command-line or use $plugin_name/, 'usage restriction';
+subtest 'without command-line test args' => sub {
+  plan tests => 2;
 
-$app_prove = App::Prove->new;
-$app_prove->process_args( qw( t/foo.t t/bar.t ) );
-$app_prove->state_manager( $app_prove->state_class->new( { store => App::Prove->STATE_FILE } ) );
-$plugin_name->load( { app_prove => $app_prove, args => [ 't/config.yml' ] } );
+  my $app_prove = App::Prove->new;
+  $app_prove->process_args( qw( t/foo.t t/bar.t ) );
+  $app_prove->state_manager( $app_prove->state_class->new( { store => App::Prove->STATE_FILE } ) );
+  $plugin_name->load( { app_prove => $app_prove, args => [ 't/config.yml' ] } );
 
-is_deeply $app_prove->test_args, { 'Foo once' => [ qw( foo bar ) ], 'Foo twice' => [], 'Foo thrice' => [ 'baz' ] },
-  'check test args';
+  is_deeply $app_prove->test_args, { 'Foo once' => [ qw( foo bar ) ], 'Foo twice' => [], 'Foo thrice' => [ 'baz' ] },
+    'check test args';
 
-is_deeply [ $app_prove->_get_tests ],
-  [ [ 't/foo.t', 'Foo once' ], [ 't/foo.t', 'Foo twice' ], [ 't/foo.t', 'Foo thrice' ], [ 't/bar.t', 't/bar.t' ] ],
-  'check tests';
+  is_deeply [ $app_prove->_get_tests ],
+    [ [ 't/foo.t', 'Foo once' ], [ 't/foo.t', 'Foo twice' ], [ 't/foo.t', 'Foo thrice' ], [ 't/bar.t', 't/bar.t' ] ],
+    'check tests';
+};
+
+# restore the unmodified App::Prove::_get_tests() method
+{
+  no warnings qw( once redefine ); ## no critic (ProhibitNoWarnings)
+  %Class::Method::Modifiers::MODIFIER_CACHE = ();
+  *App::Prove::_get_tests                   = $_get_tests_orig; ## no critic (ProtectPrivateVars)
+}
+
+subtest 'with command-line test args' => sub {
+  plan tests => 2;
+
+  my $app_prove = App::Prove->new;
+  $app_prove->process_args( qw( t/foo.t t/bar.t :: --url http://example.com ) );
+  $app_prove->state_manager( $app_prove->state_class->new( { store => App::Prove->STATE_FILE } ) );
+  $plugin_name->load( { app_prove => $app_prove, args => [ 't/config.yml' ] } );
+
+  is_deeply $app_prove->test_args,
+    {
+    'Foo once'   => [ qw( foo bar ) ],
+    'Foo twice'  => [ qw( --url http://example.com ) ],
+    'Foo thrice' => [ 'baz' ]
+    },
+    'check test args';
+
+  is_deeply [ $app_prove->_get_tests ],
+    [ [ 't/foo.t', 'Foo once' ], [ 't/foo.t', 'Foo twice' ], [ 't/foo.t', 'Foo thrice' ], [ 't/bar.t', 't/bar.t' ] ],
+    'check tests';
+};

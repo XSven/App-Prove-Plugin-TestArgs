@@ -27,13 +27,13 @@ to pass different arguments to test scripts. Furthermore the harness
 C<runtests()> object method implementation allows us to run a test script
 multiple times giving each run a unique name (an alias).  Unfortunately it
 seems to be impossible to control this functionality directly via the C<prove>
-interface.
+command-line interface.
 
 This plugin allows you to assign multiple alias-argument pairs to a test
 script.  Each pair triggers a separate run of the test script. The argument
 part of an alias-argument pair is optional. For the time being the
 configuration has to be stored in a YAML file that is the only argument passed
-to the plugin.
+to this plugin.
 
 =head1 AUTHORS
 

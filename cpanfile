@@ -17,7 +17,7 @@ on 'runtime' => sub {
   requires 'strict'                   => '0';
   requires 'warnings'                 => '0';
   requires 'Carp'                     => '0';
-  requires 'Class::Method::Modifiers' => '0';
+  requires 'Class::Method::Modifiers' => '>= 1.08';
   requires 'Config::Any'              => '0';
   requires 'YAML'                     => '0';
 };
