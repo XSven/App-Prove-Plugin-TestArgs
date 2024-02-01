@@ -46,7 +46,11 @@ sub load {
       if ( exists $test_script_has_alias{ $_ } ) {
         push @tests, @{ $test_script_has_alias{ $_ } };
       } else {
-        push @tests, $_;
+        my $alias = $_;
+        push @tests, [ $_, $alias ];
+        # register remaining test scripts to avoid the excetion
+        # TAP::Harness Can't find test_args for ... at ...
+        $app_prove->test_args->{ $alias } = [];
       }
     }
     return @tests;

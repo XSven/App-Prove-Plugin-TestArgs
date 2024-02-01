@@ -39,5 +39,5 @@ is_deeply $app_prove->test_args, { 'Foo once' => [ qw( foo bar ) ], 'Foo twice' 
   'check test args';
 
 is_deeply [ $app_prove->_get_tests ],
-  [ [ 't/foo.t', 'Foo once' ], [ 't/foo.t', 'Foo twice' ], [ 't/foo.t', 'Foo thrice' ], 't/bar.t' ],
+  [ [ 't/foo.t', 'Foo once' ], [ 't/foo.t', 'Foo twice' ], [ 't/foo.t', 'Foo thrice' ], [ 't/bar.t', 't/bar.t' ] ],
   'check tests';
