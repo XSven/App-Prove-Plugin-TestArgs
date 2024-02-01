@@ -7,7 +7,7 @@ package App::Prove::Plugin::TestArgs;
 use Class::Method::Modifiers qw( install_modifier );
 use Config::Any              qw();
 
-our $VERSION = '0.001';
+our $VERSION = '1.000000';
 
 sub load {
   my $plugin_name = shift;

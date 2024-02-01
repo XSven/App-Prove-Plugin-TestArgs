@@ -11,13 +11,13 @@ my %WriteMakefileArgs = (
   VERSION_FROM     => 'lib/App/Prove/Plugin/TestArgs.pm',
   ABSTRACT_FROM    => 'lib/App/Prove/Plugin/TestArgs.pod',
   LICENSE          => 'Perl_5',
-  MIN_PERL_VERSION => '5.14.4',
+  MIN_PERL_VERSION => '5.10.1',
   META_MERGE       => {
     'meta-spec' => { version => 2 },
     provides    => {
       'App::Prove::Plugin::TestArgs' => {
         file    => 'lib/App/Prove/Plugin/TestArgs.pm',
-        version => '0.001',
+        version => '1.000000',
       },
     },
     resources => {

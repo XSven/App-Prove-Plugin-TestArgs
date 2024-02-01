@@ -1,3 +1,4 @@
+.perlcriticrc
 Changes
 cpanfile
 lib/App/Prove/Plugin/TestArgs.pm
@@ -12,3 +13,4 @@ t/00-plugin.t
 t/01-pod.t
 t/02-critic.t
 t/config.yml
+t/foo.t
