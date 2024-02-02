@@ -4,7 +4,7 @@ use strict; use warnings;
 #>>>
 
 use Test::Fatal qw( exception );
-use Test::More import => [ qw( BAIL_OUT can_ok is_deeply like plan require_ok subtest ) ], tests => 5;
+use Test::More import => [ qw( note explain BAIL_OUT can_ok is_deeply like plan require_ok subtest ) ], tests => 5;
 
 use App::Prove ();
 
@@ -24,8 +24,6 @@ subtest 'provoke fatal perl diagnostics' => sub {
   like exception { $plugin_name->load( 'foo' ) }, qr/\ACan't use string/, 'pass string(scalar) argument';
 };
 
-my $_get_tests_orig = App::Prove->can( '_get_tests' );
-
 subtest 'without command-line test args' => sub {
   plan tests => 2;
 
@@ -41,13 +39,6 @@ subtest 'without command-line test args' => sub {
     [ [ 't/foo.t', 'Foo once' ], [ 't/foo.t', 'Foo twice' ], [ 't/foo.t', 'Foo thrice' ], [ 't/bar.t', 't/bar.t' ] ],
     'check tests';
 };
-
-# restore the unmodified App::Prove::_get_tests() method
-{
-  no warnings qw( once redefine ); ## no critic (ProhibitNoWarnings)
-  %Class::Method::Modifiers::MODIFIER_CACHE = ();
-  *App::Prove::_get_tests                   = $_get_tests_orig; ## no critic (ProtectPrivateVars)
-}
 
 subtest 'with command-line test args' => sub {
   plan tests => 2;
