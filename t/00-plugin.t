@@ -4,7 +4,7 @@ use strict; use warnings;
 #>>>
 
 use Test::Fatal qw( exception );
-use Test::More import => [ qw( note explain BAIL_OUT can_ok is_deeply like plan require_ok subtest ) ], tests => 5;
+use Test::More import => [ qw( BAIL_OUT can_ok is_deeply like plan require_ok subtest ) ], tests => 5;
 
 use App::Prove ();
 
