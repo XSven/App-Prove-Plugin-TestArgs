@@ -8,7 +8,7 @@ arguments
 =head1 SYNOPSIS
 
   # command-line 
-  prove -PTestArgs=t/config.yml
+  prove -PTestArgs=t/config.yml t/foo.t
 
   # t/config.yml
   ---

@@ -26,7 +26,8 @@ To maintain this module, run the following commands:
   make PERL_CPANM_OPT="--notest --with-develop --with-recommends" installdeps 
   perl Makefile.PL
   make
-  make RELEASE_TESTING=1 test
+  make RELEASE_TESTING=1 test  # use Test::Harness
+  make RELEASE_TESTING=1 testp # use TAP::harness
   make cover
 
 The second command installs the module dependencies in a "local" directory
