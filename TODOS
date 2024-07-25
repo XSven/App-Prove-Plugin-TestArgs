@@ -1,0 +1,19 @@
+https://github.com/Perl-Toolchain-Gang/Test-Harness/issues/131
+
+This
+
+  name: "%s (%a)
+  scripts:
+    t/foo.t:
+      - alias: "Foo once"
+        args:  [foo, bar]
+      - alias: "Foo twice"
+      - alias: "Foo thrice"
+        args:  [baz]
+
+is an alternative config.yml layout. The test script names are the keys of
+the "scripts" property. The "name" property specifies a way how a test name
+should be built. The conversion "%s" refers to the test script name ("t/foo.t").
+the conversion "%a" refers to the test alias name ("Foo once", "Foo twice",
+and so on). The CPAN module String::Format could be used to build the test
+script name.

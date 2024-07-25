@@ -69,5 +69,8 @@
 # Avoid vim files.
 \B\.vimrc\b
 
+# Avoid ctags files.
+\btags$
+
 \blocal\b
-\bREADME.md\b
+\bTODOS\b
