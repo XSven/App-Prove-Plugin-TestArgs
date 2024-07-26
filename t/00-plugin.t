@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 use Test::Fatal qw( exception );
-use Test::More import => [ qw( BAIL_OUT can_ok is_deeply like plan require_ok subtest ) ], tests => 5;
+use Test::More import => [ qw( BAIL_OUT can_ok is_deeply like note plan require_ok subtest ) ], tests => 7;
 
 use App::Prove ();
 
@@ -23,13 +23,15 @@ subtest 'provoke fatal perl diagnostics' => sub {
   like exception { $plugin_name->load( 'file' ) }, qr/\ACan't use string/, 'pass string(scalar) argument';
 };
 
-subtest 'without command-line test args' => sub {
+sub wocta {
+  my ( $config_file ) = @_;
+
   plan tests => 2;
 
   my $app_prove = App::Prove->new;
   $app_prove->process_args( qw( t/foo.t t/bar.t ) );
   $app_prove->state_manager( $app_prove->state_class->new( { store => App::Prove->STATE_FILE } ) );
-  $plugin_name->load( { app_prove => $app_prove, args => [ 't/config.yml' ] } );
+  $plugin_name->load( { app_prove => $app_prove, args => [ $config_file ] } );
 
   is_deeply $app_prove->test_args, { 'foo once' => [ qw( ABC DEF ) ], 'foo twice' => [], 'foo thrice' => [ 'GHI' ] },
     'check test args';
@@ -37,15 +39,17 @@ subtest 'without command-line test args' => sub {
   is_deeply [ $app_prove->_get_tests ],
     [ [ 't/foo.t', 'foo once' ], [ 't/foo.t', 'foo twice' ], [ 't/foo.t', 'foo thrice' ], [ 't/bar.t', 't/bar.t' ] ],
     'check tests';
-};
+}
 
-subtest 'with command-line test args' => sub {
+sub wcta {
+  my ( $config_file ) = @_;
+
   plan tests => 2;
 
   my $app_prove = App::Prove->new;
   $app_prove->process_args( qw( t/foo.t t/bar.t :: UVW XYZ ) );
   $app_prove->state_manager( $app_prove->state_class->new( { store => App::Prove->STATE_FILE } ) );
-  $plugin_name->load( { app_prove => $app_prove, args => [ 't/config.yml' ] } );
+  $plugin_name->load( { app_prove => $app_prove, args => [ $config_file ] } );
 
   is_deeply $app_prove->test_args,
     {
@@ -58,4 +62,10 @@ subtest 'with command-line test args' => sub {
   is_deeply [ $app_prove->_get_tests ],
     [ [ 't/foo.t', 'foo once' ], [ 't/foo.t', 'foo twice' ], [ 't/foo.t', 'foo thrice' ], [ 't/bar.t', 't/bar.t' ] ],
     'check tests';
-};
+}
+
+for ( qw( t/config.yml t/config_scripts.yml ) ) {
+  note 'config file: ', $_;
+  subtest 'without command-line test args' => \&wocta, $_;
+  subtest 'with command-line test args'    => \&wcta,  $_;
+}

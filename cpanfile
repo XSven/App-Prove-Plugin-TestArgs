@@ -25,7 +25,7 @@ on test => sub {
   requires 'App::Prove'  => '3.17';
   requires 'Test::Fatal' => '0';
   requires 'Test::Needs' => '0';
-  requires 'Test::More'  => '0.92';
+  requires 'Test::More'  => '1.302015';
 };
 
 on develop => sub {

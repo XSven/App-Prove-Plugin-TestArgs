@@ -25,8 +25,9 @@ sub load {
 
   my $config = LoadFile( $plugin_args->[ 0 ] );
 
-  for my $script ( keys %$config ) {
-    for ( @{ $config->{ $script } } ) {
+  my $scripts = exists $config->{ scripts } ? $config->{ scripts } : $config;
+  for my $script ( keys %$scripts ) {
+    for ( @{ $scripts->{ $script } } ) {
       my ( $alias, $script_args ) = @{ $_ }{ qw( alias args ) };
       # update test args ("args" is optional)
       $app_prove->test_args->{ $alias } = defined $script_args ? $script_args : $command_line_test_args;
