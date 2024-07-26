@@ -22,13 +22,8 @@ sub load {
   # initialize (overwrite) test args
   $app_prove->test_args( {} );
 
-  my $config;
-  {
-    no warnings 'once'; ## no critic (ProhibitNoWarnings)
-    local $YAML::Preserve = 1; ## no critic (ProhibitPackageVars)
-    ( undef, $config ) =
-      %{ Config::Any->load_files( { files => [ $plugin_args->[ 0 ] ], use_ext => 1, flatten_to_hash => 1 } ) };
-  }
+  ( undef, my $config ) =
+    %{ Config::Any->load_files( { files => [ $plugin_args->[ 0 ] ], use_ext => 1, flatten_to_hash => 1 } ) };
 
   for my $test_script ( keys %$config ) {
     for ( @{ $config->{ $test_script } } ) {
