@@ -16,8 +16,7 @@ on configure => sub {
 on runtime => sub {
   requires 'Carp'                     => '1.32';    # * bugfix: don't vivify @CARP_NOT and @ISA in caller's namespace
   requires 'Class::Method::Modifiers' => '1.08';
-  requires 'Config::Any'              => '0';
-  requires 'YAML'                     => '0';
+  requires 'YAML::PP'                 => '0';
   requires 'strict'                   => '0';
   requires 'warnings'                 => '0';
 };
