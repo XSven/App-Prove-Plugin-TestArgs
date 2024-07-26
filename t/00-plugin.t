@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 use Test::Fatal qw( exception );
-use Test::More import => [ qw( BAIL_OUT can_ok is_deeply like note plan require_ok subtest ) ], tests => 8;
+use Test::More import => [ qw( BAIL_OUT can_ok is_deeply like note plan require_ok subtest ) ], tests => 9;
 
 use App::Prove ();
 
@@ -24,76 +24,65 @@ subtest 'provoke fatal perl diagnostics' => sub {
 };
 
 sub wocta {
-  my ( $config_file ) = @_;
-
   plan tests => 2;
 
+  my ( $config_file ) = @_;
+
+  my $has_name  = $config_file =~ m/_name_/;
   my $app_prove = App::Prove->new;
   $app_prove->process_args( qw( t/foo.t t/bar.t ) );
   $app_prove->state_manager( $app_prove->state_class->new( { store => App::Prove->STATE_FILE } ) );
   $plugin_name->load( { app_prove => $app_prove, args => [ $config_file ] } );
 
-  is_deeply $app_prove->test_args, { 'foo once' => [ qw( ABC DEF ) ], 'foo twice' => [], 'foo thrice' => [ 'GHI' ] },
-    'check test args';
-
-  is_deeply [ $app_prove->_get_tests ],
-    [ [ 't/foo.t', 'foo once' ], [ 't/foo.t', 'foo twice' ], [ 't/foo.t', 'foo thrice' ], [ 't/bar.t', 't/bar.t' ] ],
-    'check tests';
-}
-
-sub wcta {
-  my ( $config_file ) = @_;
-
-  plan tests => 2;
-
-  my $app_prove = App::Prove->new;
-  $app_prove->process_args( qw( t/foo.t t/bar.t :: UVW XYZ ) );
-  $app_prove->state_manager( $app_prove->state_class->new( { store => App::Prove->STATE_FILE } ) );
-  $plugin_name->load( { app_prove => $app_prove, args => [ $config_file ] } );
-
   is_deeply $app_prove->test_args,
     {
-    'foo once'   => [ qw( ABC DEF ) ],
-    'foo twice'  => [ qw( UVW XYZ ) ],
-    'foo thrice' => [ 'GHI' ]
-    },
-    'check test args';
-
-  is_deeply [ $app_prove->_get_tests ],
-    [ [ 't/foo.t', 'foo once' ], [ 't/foo.t', 'foo twice' ], [ 't/foo.t', 'foo thrice' ], [ 't/bar.t', 't/bar.t' ] ],
-    'check tests';
-}
-
-for ( qw( t/config.yml t/config_scripts.yml ) ) {
-  note 'config file: ', $_;
-  subtest 'without command-line test args' => \&wocta, $_;
-  subtest 'with command-line test args'    => \&wcta,  $_;
-}
-
-subtest 'named' => sub {
-  my ( $config_file ) = 't/config_name_scripts.yml';
-
-  plan tests => 2;
-
-  my $app_prove = App::Prove->new;
-  $app_prove->process_args( qw( t/foo.t t/bar.t :: UVW XYZ ) );
-  $app_prove->state_manager( $app_prove->state_class->new( { store => App::Prove->STATE_FILE } ) );
-  $plugin_name->load( { app_prove => $app_prove, args => [ $config_file ] } );
-
-  is_deeply $app_prove->test_args,
-    {
-    't/foo.t (foo once)'   => [ qw( ABC DEF ) ],
-    't/foo.t (foo twice)'  => [ qw( UVW XYZ ) ],
-    't/foo.t (foo thrice)' => [ 'GHI' ]
+    $has_name ? 't/foo.t (foo once)'   : 'foo once'   => [ qw( ABC DEF ) ],
+    $has_name ? 't/foo.t (foo twice)'  : 'foo twice'  => [],
+    $has_name ? 't/foo.t (foo thrice)' : 'foo thrice' => [ 'GHI' ]
     },
     'check test args';
 
   is_deeply [ $app_prove->_get_tests ],
     [
-    [ 't/foo.t', 't/foo.t (foo once)' ],
-    [ 't/foo.t', 't/foo.t (foo twice)' ],
-    [ 't/foo.t', 't/foo.t (foo thrice)' ],
+    [ 't/foo.t', $has_name ? 't/foo.t (foo once)'   : 'foo once' ],
+    [ 't/foo.t', $has_name ? 't/foo.t (foo twice)'  : 'foo twice' ],
+    [ 't/foo.t', $has_name ? 't/foo.t (foo thrice)' : 'foo thrice' ],
     [ 't/bar.t', 't/bar.t' ]
     ],
     'check tests';
-};
+}
+
+sub wcta {
+  plan tests => 2;
+
+  my ( $config_file ) = @_;
+
+  my $has_name  = $config_file =~ m/_name_/;
+  my $app_prove = App::Prove->new;
+  $app_prove->process_args( qw( t/foo.t t/bar.t :: UVW XYZ ) );
+  $app_prove->state_manager( $app_prove->state_class->new( { store => App::Prove->STATE_FILE } ) );
+  $plugin_name->load( { app_prove => $app_prove, args => [ $config_file ] } );
+
+  is_deeply $app_prove->test_args,
+    {
+    $has_name ? 't/foo.t (foo once)'   : 'foo once'   => [ qw( ABC DEF ) ],
+    $has_name ? 't/foo.t (foo twice)'  : 'foo twice'  => [ qw( UVW XYZ ) ],
+    $has_name ? 't/foo.t (foo thrice)' : 'foo thrice' => [ 'GHI' ]
+    },
+    'check test args';
+
+  is_deeply [ $app_prove->_get_tests ],
+    [
+    [ 't/foo.t', $has_name ? 't/foo.t (foo once)'   : 'foo once' ],
+    [ 't/foo.t', $has_name ? 't/foo.t (foo twice)'  : 'foo twice' ],
+    [ 't/foo.t', $has_name ? 't/foo.t (foo thrice)' : 'foo thrice' ],
+    [ 't/bar.t', 't/bar.t' ]
+    ],
+    'check tests';
+}
+
+for ( qw( t/config.yml t/config_scripts.yml t/config_name_scripts.yml ) ) {
+  note 'config file: ', $_;
+  subtest 'without command-line test args' => \&wocta, $_;
+  subtest 'with command-line test args'    => \&wcta,  $_;
+}
