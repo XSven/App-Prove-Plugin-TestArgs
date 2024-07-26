@@ -47,12 +47,12 @@ arguments
 L<TAP::Harness> is the default test harness of the C<prove> command-line test
 driver program. The harness has a C<test_args> object attribute that allows us
 to pass different arguments to test scripts. Furthermore the harness
-C<runtests()> object method implementation allows us to run a test script
-multiple times giving each run a unique name (an C<alias>).  Unfortunately it
-seems to be impossible to control this functionality directly via the C<prove>
+C<runtests()> object method implementation helps us to run a test script
+multiple times giving each run a unique test name (an C<alias>).  Unfortunately
+it seems to be impossible to control this feature directly via the C<prove>
 command-line interface.
 
-This plugin allows you to assign multiple C<alias>-C<args> pairs to a test
+This plugin allows us to assign multiple C<alias>-C<args> pairs to a test
 script.  Each pair triggers a separate run of the test script. The C<args> part
 of a pair is optional. If it is missing, C<prove>'s own optional test script
 arguments passed at the command-line after an arisdottle (C<::>) are used as a
