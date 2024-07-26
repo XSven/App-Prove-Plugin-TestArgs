@@ -20,7 +20,7 @@ subtest 'provoke fatal perl diagnostics' => sub {
 
   like exception { $plugin_name->load( [] ) }, qr/\ANot a HASH reference/, 'pass wrong reference type';
 
-  like exception { $plugin_name->load( 'foo' ) }, qr/\ACan't use string/, 'pass string(scalar) argument';
+  like exception { $plugin_name->load( 'file' ) }, qr/\ACan't use string/, 'pass string(scalar) argument';
 };
 
 subtest 'without command-line test args' => sub {
@@ -31,11 +31,11 @@ subtest 'without command-line test args' => sub {
   $app_prove->state_manager( $app_prove->state_class->new( { store => App::Prove->STATE_FILE } ) );
   $plugin_name->load( { app_prove => $app_prove, args => [ 't/config.yml' ] } );
 
-  is_deeply $app_prove->test_args, { 'Foo once' => [ qw( foo bar ) ], 'Foo twice' => [], 'Foo thrice' => [ 'baz' ] },
+  is_deeply $app_prove->test_args, { 'foo once' => [ qw( ABC DEF ) ], 'foo twice' => [], 'foo thrice' => [ 'GHI' ] },
     'check test args';
 
   is_deeply [ $app_prove->_get_tests ],
-    [ [ 't/foo.t', 'Foo once' ], [ 't/foo.t', 'Foo twice' ], [ 't/foo.t', 'Foo thrice' ], [ 't/bar.t', 't/bar.t' ] ],
+    [ [ 't/foo.t', 'foo once' ], [ 't/foo.t', 'foo twice' ], [ 't/foo.t', 'foo thrice' ], [ 't/bar.t', 't/bar.t' ] ],
     'check tests';
 };
 
@@ -43,19 +43,19 @@ subtest 'with command-line test args' => sub {
   plan tests => 2;
 
   my $app_prove = App::Prove->new;
-  $app_prove->process_args( qw( t/foo.t t/bar.t :: --url http://example.com ) );
+  $app_prove->process_args( qw( t/foo.t t/bar.t :: UVW XYZ ) );
   $app_prove->state_manager( $app_prove->state_class->new( { store => App::Prove->STATE_FILE } ) );
   $plugin_name->load( { app_prove => $app_prove, args => [ 't/config.yml' ] } );
 
   is_deeply $app_prove->test_args,
     {
-    'Foo once'   => [ qw( foo bar ) ],
-    'Foo twice'  => [ qw( --url http://example.com ) ],
-    'Foo thrice' => [ 'baz' ]
+    'foo once'   => [ qw( ABC DEF ) ],
+    'foo twice'  => [ qw( UVW XYZ ) ],
+    'foo thrice' => [ 'GHI' ]
     },
     'check test args';
 
   is_deeply [ $app_prove->_get_tests ],
-    [ [ 't/foo.t', 'Foo once' ], [ 't/foo.t', 'Foo twice' ], [ 't/foo.t', 'Foo thrice' ], [ 't/bar.t', 't/bar.t' ] ],
+    [ [ 't/foo.t', 'foo once' ], [ 't/foo.t', 'foo twice' ], [ 't/foo.t', 'foo thrice' ], [ 't/bar.t', 't/bar.t' ] ],
     'check tests';
 };
