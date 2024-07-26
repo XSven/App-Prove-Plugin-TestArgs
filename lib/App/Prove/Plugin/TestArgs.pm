@@ -4,6 +4,7 @@ use warnings;
 package App::Prove::Plugin::TestArgs;
 
 use Class::Method::Modifiers qw( install_modifier );
+use String::Format           qw( stringf );
 use YAML::PP                 qw( LoadFile );
 
 # keeping the following $VERSION declaration on a single line is important
@@ -25,9 +26,11 @@ sub load {
 
   my $config = LoadFile( $plugin_args->[ 0 ] );
 
-  for my $script ( keys %$config ) {
-    for ( @{ $config->{ $script } } ) {
+  my $scripts = exists $config->{ scripts } ? $config->{ scripts } : $config;
+  for my $script ( keys %$scripts ) {
+    for ( @{ $scripts->{ $script } } ) {
       my ( $alias, $script_args ) = @{ $_ }{ qw( alias args ) };
+      $alias = stringf( $config->{ name }, { a => $alias, s => $script } ) if exists $config->{ name };
       # update test args ("args" is optional)
       $app_prove->test_args->{ $alias } = defined $script_args ? $script_args : $command_line_test_args;
       push @{ $script_has_alias{ $script } }, [ $script, $alias ];
