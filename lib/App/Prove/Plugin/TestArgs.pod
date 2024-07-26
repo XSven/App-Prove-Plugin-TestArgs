@@ -10,31 +10,36 @@ arguments
   # t/config.yml
   ---
   t/foo.t:
-    - alias: "Foo once"
-      args:  [foo, bar]
-    - alias: "Foo twice"
-    - alias: "Foo thrice"
-      args:  [baz]
+    - alias: "foo once"
+      args:  [ABC, DEF]
+    - alias: "foo twice"
+    - alias: "foo thrice"
+      args:  [GHI]
 
   # command-line 
-  prove -PTestArgs=t/config.yml --verbose t/foo.t :: quux corge
-  Foo once ....
+  prove -PTestArgs=t/config.yml --verbose t/foo.t t/bar.t :: UVW XYZ
+  foo once ....
   1..1
-  # ['foo','bar']
+  # ['ABC','DEF']
   ok 1 - t/foo.t
   ok
-  Foo twice ...
+  foo twice ...
   1..1
-  # ['quux','corge']
+  # ['UVW','XYZ']
   ok 1 - t/foo.t
   ok
-  Foo thrice ..
+  foo thrice ..
   1..1
-  # ['baz']
+  # ['GHI']
   ok 1 - t/foo.t
+  ok
+  t/bar.t .....
+  1..1
+  # ['UVW','XYZ']
+  ok 1 - t/bar.t
   ok
   All tests successful.
-  Files=3, Tests=3,  0 wallclock secs ( 0.02 usr  0.01 sys +  0.07 cusr  0.02 csys =  0.12 CPU)
+  Files=4, Tests=4,  0 wallclock secs ( 0.01 usr  0.01 sys +  0.03 cusr  0.00 csys =  0.05 CPU)
   Result: PASS
 
 =head1 DESCRIPTION

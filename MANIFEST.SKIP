@@ -57,6 +57,9 @@
 \bcover_db\b
 \bcovered\b
 
+# Avoid Perl::Critic files.
+\B\.perlcriticrc\b
+
 # Avoid Perl::Tidy files.
 \B\.perltidyrc\b
 
