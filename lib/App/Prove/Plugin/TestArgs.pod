@@ -61,6 +61,47 @@ default.
 For the time being the configuration has to be stored in a YAML file that is
 the only argument passed to this plugin.
 
+C<prove>'s test output no longer shows the test script names, if test aliases
+are configured. As of version C<2.1.0> this plugin provides an alternative
+configuration scheme that helps us to overcome this drawback.
+
+  # t/config_name_scripts.yml
+  ---
+  name: "%s (%a)"
+  scripts:
+    t/foo.t:
+      - alias: "foo once"
+        args:  [ABC, DEF]
+      - alias: "foo twice"
+      - alias: "foo thrice"
+        args:  [GHI]
+
+  # command-line 
+  prove -PTestArgs=t/config_name_scripts.yml --verbose t/foo.t t/bar.t :: UVW XYZ
+  t/foo.t (foo once) ....
+  1..1
+  # ['ABC','DEF']
+  ok 1 - t/foo.t
+  ok
+  t/foo.t (foo twice) ...
+  1..1
+  # ['UVW','XYZ']
+  ok 1 - t/foo.t
+  ok
+  t/foo.t (foo thrice) ..
+  1..1
+  # ['GHI']
+  ok 1 - t/foo.t
+  ok
+  t/bar.t ...............
+  1..1
+  # ['UVW','XYZ']
+  ok 1 - t/bar.t
+  ok
+  All tests successful.
+  Files=4, Tests=4,  0 wallclock secs ( 0.02 usr  0.01 sys +  0.15 cusr  0.02 csys =  0.20 CPU)
+  Result: PASS
+
 =head1 AUTHORS
 
 Sven Willenbuecher, E<lt>sven.willenbuecher@gmx.deE<gt>
