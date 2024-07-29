@@ -12,5 +12,6 @@ t/01-pod.t
 t/02-critic.t
 t/bar.t
 t/config.yml
+t/config_name_scripts.yml
 t/config_scripts.yml
 t/foo.t
