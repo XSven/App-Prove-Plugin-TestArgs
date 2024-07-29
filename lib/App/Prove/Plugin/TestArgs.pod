@@ -50,13 +50,14 @@ to pass different arguments to test scripts. Furthermore the harness
 C<runtests()> object method implementation helps us to run a test script
 multiple times giving each run a unique test name (an C<alias>).  Unfortunately
 it seems to be impossible to control this feature directly via the C<prove>
-command-line interface.
+command-line interface. C<prove> uses the full path to the test script as the
+test name in its test output.
 
-This plugin allows us to assign multiple C<alias>-C<args> pairs to a test
-script.  Each pair triggers a separate run of the test script. The C<args> part
-of a pair is optional. If it is missing, C<prove>'s own optional test script
-arguments passed at the command-line after an arisdottle (C<::>) are used as a
-default.
+This plugin allows us to assign multiple C<alias>-C<args> mappings to a test
+script.  Each mapping triggers a separate run of the test script. The C<args>
+key of a mapping is optional. If it is missing, C<prove>'s own optional test
+script arguments, passed at the command-line after an arisdottle (C<::>), are
+used as a default.
 
 For the time being the configuration has to be stored in a YAML file that is
 the only argument passed to this plugin.
@@ -101,6 +102,13 @@ configuration scheme that helps us to overcome this drawback.
   All tests successful.
   Files=4, Tests=4,  0 wallclock secs ( 0.02 usr  0.01 sys +  0.15 cusr  0.02 csys =  0.20 CPU)
   Result: PASS
+
+The C<scripts> key points to the test scripts mapping. The C<name> key points
+to a L<functions/sprintf> like format. The allowed conversions are C<%s> (full
+path to the test script) and C<%a> (test alias). The format tells C<prove> what
+to use as the test name in its test output. The C<name> key is optional. If it
+is omitted the C<scripts> key can be omitted too and this brings us back to the
+original configuration scheme.
 
 =head1 AUTHORS
 
